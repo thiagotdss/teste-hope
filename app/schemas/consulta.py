@@ -28,12 +28,21 @@ class ConsultaResponse(BaseModel):
     tipo: str
     status: ConsultaStatus
     tentativas: int
-    resultado: dict | None
-    ultimo_erro: str | None
+    resultado: dict | None = None
+    ultimo_erro: str | None = None
     created_at: datetime
     updated_at: datetime
-    processed_at: datetime | None
+    processed_at: datetime | None = None
 
     model_config = {
-        "from_attributes": True
+        "from_attributes": True,
+        "exclude_none": True,
     }
+
+
+class ConsultaListResponse(BaseModel):
+    items: list[ConsultaResponse]
+    total: int
+    page: int
+    page_size: int
+    pages: int
