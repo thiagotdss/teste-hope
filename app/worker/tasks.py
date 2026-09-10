@@ -3,6 +3,7 @@ from app.db.database import SessionLocal
 from app.models.consulta import Consulta, ConsultaStatus
 from app.core.logging import logger
 from app.core.config import settings
+from datetime import datetime, UTC
 import requests
 import time
 
@@ -44,7 +45,7 @@ def processar_consulta(consulta_id: str):
 
             try:
                 resposta = requests.post(
-                    f"{settings.url_fake_api}/fake/customer?cenario=erro",
+                    f"{settings.url_fake_api}/fake/customer?cenario=sucesso",
                     timeout=10,
                     json={
                         "documento": consulta.documento,
@@ -56,6 +57,7 @@ def processar_consulta(consulta_id: str):
 
                 consulta.resultado = resposta.json()
                 consulta.status = ConsultaStatus.SUCCESS
+                consulta.processed_at = datetime.now(UTC)
                 db.commit()
 
                 logger.info(
@@ -75,11 +77,13 @@ def processar_consulta(consulta_id: str):
                     if resposta.status_code not in (500, 503):
                         consulta.status = ConsultaStatus.ERROR
                         consulta.ultimo_erro = str(exc)
+                        consulta.processed_at = datetime.now(UTC)
                         db.commit()
                         return
 
                 if tentativa == max_tentativas - 1:
                     consulta.status = ConsultaStatus.ERROR
+                    consulta.processed_at = datetime.now(UTC)
                     db.commit()
 
                     logger.error(
