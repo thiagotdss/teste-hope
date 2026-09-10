@@ -65,8 +65,18 @@ def processar_consulta(consulta_id: str):
 
                 return
 
-            except requests.exceptions.HTTPError as exc:
+            except (
+                requests.exceptions.HTTPError,
+                requests.exceptions.Timeout,
+            ) as exc:
                 consulta.ultimo_erro = str(exc)
+
+                if isinstance(exc, requests.exceptions.HTTPError):
+                    if resposta.status_code not in (500, 503):
+                        consulta.status = ConsultaStatus.ERROR
+                        consulta.ultimo_erro = str(exc)
+                        db.commit()
+                        return
 
                 if tentativa == max_tentativas - 1:
                     consulta.status = ConsultaStatus.ERROR
@@ -82,7 +92,7 @@ def processar_consulta(consulta_id: str):
 
                     return
 
-                tempo_espera = 2 ** tentativa
+                tempo_espera = 2 ** (tentativa + 1)
 
                 logger.warning(
                     "Erro temporário na integração - consulta_id=%s "
