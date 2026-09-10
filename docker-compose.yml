@@ -10,6 +10,35 @@ services:
       - "5433:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+  fake-api:
+    build:
+      context: ./app/fake_api
+    container_name: fake-customer-api
+    ports:
+      - "8001:8000"
+  
+  redis:
+    image: redis:7
+    container_name: consultas-redis
+  
+  worker:
+    build:
+      context: .
+    container_name: consultas-worker
+    command: celery -A app.worker.celery_app.celery_app worker --loglevel=info
+    depends_on:
+      - redis
+      - postgres
+  
+  api:
+    build:
+      context: .
+    container_name: consultas-api
+    ports:
+      - "8000:8000"
+    depends_on:
+      - postgres
+      - redis
 
 volumes:
   postgres_data:

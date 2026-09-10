@@ -6,6 +6,7 @@ from app.core.logging import logger
 from app.core.exceptions import AppException
 from sqlalchemy.exc import SQLAlchemyError
 from fastapi import status
+from app.worker.tasks import processar_consulta
 import time
 
 
@@ -136,6 +137,8 @@ def create_consulta(db: Session, dados: ConsultaCreate) -> Consulta:
             consulta.id,
             tempo_final,
         )
+        
+        processar_consulta.delay(str(consulta.id))
 
         return consulta
 

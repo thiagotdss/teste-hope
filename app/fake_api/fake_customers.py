@@ -1,14 +1,12 @@
-from fastapi import APIRouter
-from fastapi import Query
-from fastapi.responses import JSONResponse
 import time
 
-router = APIRouter(
-    prefix="/fake",
-    tags=["Fake API"],
-)
+from fastapi import APIRouter, Query
+from fastapi.responses import JSONResponse
 
-@router.post("/customer")
+router = APIRouter()
+
+
+@router.post("/fake/customer")
 def fake_customer(
     cenario: str = Query(default="sucesso"),
 ):
@@ -35,7 +33,7 @@ def fake_customer(
             "score": 742,
             "situacao": "REGULAR",
         }
-    
+
     if cenario == "lento":
         time.sleep(15)
 

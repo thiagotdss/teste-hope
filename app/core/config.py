@@ -6,6 +6,7 @@ class Settings(BaseSettings):
     postgres_db: str
     postgres_user: str
     postgres_password: str
+    url_fake_api: str
 
     class Config:
         env_file = ".env"

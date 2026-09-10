@@ -4,7 +4,7 @@ from fastapi.requests import Request
 from app.core.exceptions import AppException
 from app.api.routes.consultas import router as consultas_router
 from fastapi.exceptions import RequestValidationError
-from app.api.routes.fake_customers import router as fake_customers_router
+from app.fake_api.fake_customers import router as fake_customers_router
 
 app = FastAPI(
     title="Consulta API",
