@@ -23,7 +23,7 @@ def test_criar_consulta(client):
     assert "id" in data
     assert data["status"] == "PENDING"
 
-    mock_delay.assert_called_once()
+    mock_delay.assert_called_once() #Verifica se a função processar_consulta.delay foi chamada exatamente uma vez.
 
 #Validação de payload inválido
 def test_criar_consulta_payload_invalido(client):

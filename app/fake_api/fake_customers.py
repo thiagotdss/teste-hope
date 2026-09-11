@@ -35,7 +35,7 @@ def fake_customer(
         }
 
     if cenario == "lento":
-        time.sleep(15)
+        time.sleep(7)
 
         return {
             "nome": "Cliente Teste",
